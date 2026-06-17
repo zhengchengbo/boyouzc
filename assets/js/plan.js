@@ -1,6 +1,10 @@
 // ========================================
 // 博友政策 · 自助申报规划 JS
+// 含DOCX生成 + 下载功能
 // ========================================
+
+// docx 库来自全局加载
+const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, HeadingLevel, AlignmentType, WidthType, BorderStyle, LevelFormat, NumberFormat, convertInchesToPoint } = docx;
 
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -35,6 +39,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = collectFormData(form);
             
             // 模拟生成过程（实际应用中可以调后端API）
+            const loadingHtml = '<div class="result-loading">' +
+                '<div class="loading-spinner"></div>' +
+                '<h3>正在为您生成专属申报规划书...</h3>' +
+                '<p>分析企业数据 · 匹配政策资源 · 制定最优方案</p>' +
+                '</div>';
+            resultDiv.innerHTML = loadingHtml;
+            
             setTimeout(function() {
                 showResult(data);
             }, 2500);
@@ -54,20 +65,47 @@ function collectFormData(form) {
     data.qualifications = [];
     data.interests = [];
     form.querySelectorAll('input[type="checkbox"]:checked').forEach(function(c) {
-        if (c.name === 'qualifications') data.qualifications.push(c.value);
-        if (c.name === 'interests') data.interests.push(c.value);
+        if (c.name in data) {
+            if (!Array.isArray(data[c.name])) data[c.name] = [];
+            data[c.name].push(c.value);
+        } else {
+            if (c.name === 'qualifications') data.qualifications.push(c.value);
+            if (c.name === 'interests') data.interests.push(c.value);
+        }
     });
+    
+    // 转换显示的文本
+    data.companyName = form.querySelector('[name="companyName"]').value.trim();
+    data.contactName = form.querySelector('[name="contactName"]').value.trim();
+    data.contactPhone = form.querySelector('[name="contactPhone"]').value.trim();
+    
+    var industryMap = {'信息技术':'信息技术','生物医药':'生物医药','新材料':'新材料','高端装备':'高端装备制造','新能源':'新能源/节能环保','人工智能':'人工智能','电子信息':'电子信息','制造业':'传统制造业','建筑业':'建筑业','农业':'现代农业','文化创意':'文化创意','其他':'其他'};
+    data.industryText = industryMap[data.industry] || data.industry;
+    
+    var yearMap = {'2025':'成立不到1年','2024':'成立约1-2年','2023':'成立约2-3年','2022':'成立约3-4年','2021':'成立约4-5年','2020-2016':'成立5-10年','2015-before':'成立10年以上'};
+    data.establishText = yearMap[data.establishYear] || data.establishYear;
+    
+    var districtMap = {'福田区':'福田区','罗湖区':'罗湖区','南山区':'南山区','宝安区':'宝安区','龙岗区':'龙岗区','龙华区':'龙华区','光明区':'光明区','坪山区':'坪山区','盐田区':'盐田区','大鹏新区':'大鹏新区','深汕合作区':'深汕合作区','广东省其他市':'广东省其他市','其他省市':'其他省市'};
+    data.districtText = districtMap[data.district] || data.district;
+    
+    var revenueMap = {'0-500':'500万以下','500-1000':'500万-1000万','1000-2000':'1000万-2000万','2000-5000':'2000万-5000万','5000-10000':'5000万-1亿','10000-20000':'1亿-2亿','20000-50000':'2亿-5亿','50000+':'5亿以上'};
+    data.revenueText = revenueMap[data.revenue] || data.revenue;
+    
+    var empMap = {'0-5':'5人及以下','5-10':'6-10人','10-20':'10-20人','20-50':'20-50人','50-100':'50-100人','100-200':'100-200人','200-500':'200-500人','500+':'500人以上'};
+    data.employeesText = empMap[data.employees] || data.employees;
     
     return data;
 }
 
-// 显示结果
+// 显示结果并生成docx
 function showResult(data) {
+    const matches = generateMatches(data);
     const resultDiv = document.getElementById('planResult');
     
-    // 根据数据生成匹配结果
-    const matches = generateMatches(data);
+    // 生成docx
+    generateDocx(data, matches);
     
+    // 展示结果页
     let html = '<div class="result-content">';
     html += '<div class="result-header">';
     html += '<span class="result-icon">🎉</span>';
@@ -75,16 +113,18 @@ function showResult(data) {
     html += '<p>以下是根据您的企业信息匹配的深圳2026年补贴项目</p>';
     html += '</div>';
     
-    // 理想申报时间线
+    // 下载按钮
+    html += '<div class="result-download-bar">';
+    html += '<button class="btn btn-primary btn-lg" onclick="downloadDocx()">📥 下载申报规划书（Word文档）</button>';
+    html += '<p class="download-note">.docx格式，可直接用Word/WPS打开编辑</p>';
+    html += '</div>';
+    
+    // 申报时间线
     html += '<div class="result-section">';
     html += '<h3>📅 推荐申报时间线</h3>';
     html += '<div class="timeline">';
     
-    var now = new Date();
-    var year = now.getFullYear();
-    var month = now.getMonth() + 1;
-    
-    matches.forEach(function(m, idx) {
+    matches.forEach(function(m) {
         var status = '';
         if (m.urgency === 'now') {
             status = '<span class="badge badge-now">正在进行</span>';
@@ -126,9 +166,314 @@ function showResult(data) {
     html += '</div>';
     
     resultDiv.innerHTML = html;
+    
+    // 滚动到结果区
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// 匹配逻辑 - 根据企业数据生成推荐项目
+// ========================================
+// DOCX生成
+// ========================================
+
+var _docxBlob = null; // 缓存生成的docx
+
+async function generateDocx(data, matches) {
+    try {
+        const now = new Date();
+        const dateStr = now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日';
+        
+        // 企业信息表格数据
+        const infoRows = [
+            ['企业名称', data.companyName || '—'],
+            ['所属行业', data.industryText || '—'],
+            ['成立时间', data.establishText || '—'],
+            ['注册地区', data.districtText || '—'],
+            ['上年度营收', data.revenueText || '—'],
+            ['员工人数', data.employeesText || '—'],
+            ['联系电话', data.contactPhone || '—'],
+            ['联系人', data.contactName || '—']
+        ];
+        
+        // 构建文档段落
+        const children = [];
+        
+        // === 封面/标题 ===
+        children.push(new Paragraph({
+            spacing: { before: 600, after: 200 },
+            alignment: AlignmentType.CENTER,
+            children: [
+                new TextRun({ text: '企业政策申报规划书', bold: true, size: 44, font: 'SimHei', color: '1a3a5c' })
+            ]
+        }));
+        
+        children.push(new Paragraph({
+            spacing: { before: 100, after: 100 },
+            alignment: AlignmentType.CENTER,
+            children: [
+                new TextRun({ text: '深圳市博友项目科技有限公司', size: 24, font: 'SimSun', color: '666666' })
+            ]
+        }));
+        
+        children.push(new Paragraph({
+            spacing: { before: 100, after: 400 },
+            alignment: AlignmentType.CENTER,
+            children: [
+                new TextRun({ text: '生成日期：' + dateStr, size: 22, font: 'SimSun', color: '666666' })
+            ]
+        }));
+        
+        // 分隔线
+        children.push(new Paragraph({
+            spacing: { before: 0, after: 400 },
+            border: { bottom: { size: 6, color: 'c9a84c', style: BorderStyle.SINGLE, space: 1 } },
+            children: []
+        }));
+        
+        // === 一、企业基本信息 ===
+        children.push(new Paragraph({
+            spacing: { before: 400, after: 200 },
+            children: [
+                new TextRun({ text: '一、企业基本信息', bold: true, size: 28, font: 'SimHei', color: '1a3a5c' })
+            ]
+        }));
+        
+        // 信息表格
+        const tableRows = infoRows.map(function(row) {
+            return new TableRow({
+                children: [
+                    new TableCell({
+                        width: { size: 2000, type: WidthType.DXA },
+                        children: [new Paragraph({
+                            spacing: { before: 60, after: 60 },
+                            alignment: AlignmentType.CENTER,
+                            children: [new TextRun({ text: row[0], bold: true, size: 21, font: 'SimSun' })]
+                        })]
+                    }),
+                    new TableCell({
+                        width: { size: 6000, type: WidthType.DXA },
+                        children: [new Paragraph({
+                            spacing: { before: 60, after: 60 },
+                            children: [new TextRun({ text: row[1], size: 21, font: 'SimSun' })]
+                        })]
+                    })
+                ]
+            });
+        });
+        
+        const infoTable = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: tableRows
+        });
+        children.push(infoTable);
+        children.push(new Paragraph({ spacing: { before: 200, after: 200 }, children: [] }));
+        
+        // === 二、匹配结果摘要 ===
+        children.push(new Paragraph({
+            spacing: { before: 400, after: 200 },
+            children: [
+                new TextRun({ text: '二、政策匹配结果', bold: true, size: 28, font: 'SimHei', color: '1a3a5c' })
+            ]
+        }));
+        
+        children.push(new Paragraph({
+            spacing: { before: 100, after: 200 },
+            children: [
+                new TextRun({ text: '经系统分析贵企业的基本情况，以下为推荐的申报项目（按优先级排序）：', size: 22, font: 'SimSun' })
+            ]
+        }));
+        
+        // 匹配结果表格
+        const matchHeaderRow = new TableRow({
+            tableHeader: true,
+            children: [
+                new TableCell({
+                    width: { size: 800, type: WidthType.DXA },
+                    children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: '序号', bold: true, size: 20, font: 'SimHei', color: 'FFFFFF' })] })]
+                }),
+                new TableCell({
+                    width: { size: 3000, type: WidthType.DXA },
+                    children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: '推荐项目', bold: true, size: 20, font: 'SimHei', color: 'FFFFFF' })] })]
+                }),
+                new TableCell({
+                    width: { size: 2200, type: WidthType.DXA },
+                    children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: '预估补贴', bold: true, size: 20, font: 'SimHei', color: 'FFFFFF' })] })]
+                }),
+                new TableCell({
+                    width: { size: 2000, type: WidthType.DXA },
+                    children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: '申报窗口', bold: true, size: 20, font: 'SimHei', color: 'FFFFFF' })] })]
+                })
+            ]
+        });
+        
+        const matchDataRows = matches.map(function(m, idx) {
+            return new TableRow({
+                children: [
+                    new TableCell({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: String(idx + 1), size: 20, font: 'SimSun' })] })] }),
+                    new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: m.name, size: 20, font: 'SimSun' })] })] }),
+                    new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: m.amount, size: 20, font: 'SimSun' })] })] }),
+                    new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: m.window, size: 20, font: 'SimSun' })] })] })
+                ]
+            });
+        });
+        
+        const matchTable = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [matchHeaderRow].concat(matchDataRows)
+        });
+        children.push(matchTable);
+        children.push(new Paragraph({ spacing: { before: 200, after: 200 }, children: [] }));
+        
+        // === 三、详细规划 ===
+        children.push(new Paragraph({
+            spacing: { before: 400, after: 200 },
+            children: [
+                new TextRun({ text: '三、详细申报规划', bold: true, size: 28, font: 'SimHei', color: '1a3a5c' })
+            ]
+        }));
+        
+        matches.forEach(function(m, idx) {
+            children.push(new Paragraph({
+                spacing: { before: 200, after: 100 },
+                children: [
+                    new TextRun({ text: (idx + 1) + '. ' + m.name, bold: true, size: 24, font: 'SimHei', color: '1a3a5c' })
+                ]
+            }));
+            
+            children.push(new Paragraph({
+                spacing: { before: 60, after: 60 },
+                indent: { left: 400 },
+                children: [
+                    new TextRun({ text: '预估补贴：', bold: true, size: 22, font: 'SimSun' }),
+                    new TextRun({ text: m.amount, size: 22, font: 'SimSun' })
+                ]
+            }));
+            
+            children.push(new Paragraph({
+                spacing: { before: 60, after: 60 },
+                indent: { left: 400 },
+                children: [
+                    new TextRun({ text: '申报窗口：', bold: true, size: 22, font: 'SimSun' }),
+                    new TextRun({ text: m.window, size: 22, font: 'SimSun' })
+                ]
+            }));
+            
+            children.push(new Paragraph({
+                spacing: { before: 60, after: 200 },
+                indent: { left: 400 },
+                children: [
+                    new TextRun({ text: '项目说明：', bold: true, size: 22, font: 'SimSun' }),
+                    new TextRun({ text: m.desc, size: 22, font: 'SimSun' })
+                ]
+            }));
+        });
+        
+        // === 四、温馨提示 ===
+        children.push(new Paragraph({
+            spacing: { before: 400, after: 200 },
+            children: [
+                new TextRun({ text: '四、温馨提示', bold: true, size: 28, font: 'SimHei', color: '1a3a5c' })
+            ]
+        }));
+        
+        const tips = [
+            '本规划书由系统自动生成，仅供参考。各项目最终申报条件以当年政府正式发布的通知为准。',
+            '建议您联系博友政策获取免费的专业诊断，13年经验的资深顾问将为您做一对一的政策匹配分析。',
+            '部分项目需要提前准备材料（如知识产权申请周期6-18个月），建议尽早规划。',
+            '各区奖励政策每年可能微调，请以申报时发布的最新政策文件为准。'
+        ];
+        
+        tips.forEach(function(tip) {
+            children.push(new Paragraph({
+                spacing: { before: 60, after: 60 },
+                indent: { left: 400 },
+                children: [
+                    new TextRun({ text: '• ', size: 22, font: 'SimSun' }),
+                    new TextRun({ text: tip, size: 22, font: 'SimSun' })
+                ]
+            }));
+        });
+        
+        // === 页脚信息 ===
+        children.push(new Paragraph({
+            spacing: { before: 600, after: 100 },
+            border: { top: { size: 6, color: 'c9a84c', style: BorderStyle.SINGLE, space: 1 } },
+            children: []
+        }));
+        
+        children.push(new Paragraph({
+            spacing: { before: 200 },
+            alignment: AlignmentType.CENTER,
+            children: [
+                new TextRun({ text: '深圳市博友项目科技有限公司', size: 20, font: 'SimSun', color: '999999' })
+            ]
+        }));
+        
+        children.push(new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [
+                new TextRun({ text: '电话：135-9045-7677 | 网站：boyouzc.com', size: 20, font: 'SimSun', color: '999999' })
+            ]
+        }));
+        
+        children.push(new Paragraph({
+            spacing: { after: 200 },
+            alignment: AlignmentType.CENTER,
+            children: [
+                new TextRun({ text: '地址：深圳市龙岗区碧新路2380号新生绿谷3栋1701', size: 20, font: 'SimSun', color: '999999' })
+            ]
+        }));
+        
+        // 构建文档
+        const doc = new Document({
+            styles: {
+                default: {
+                    document: {
+                        run: { font: 'SimSun', size: 22 }
+                    }
+                }
+            },
+            sections: [{
+                properties: {
+                    page: {
+                        margin: { top: convertInchesToPoint(1), right: convertInchesToPoint(1), bottom: convertInchesToPoint(1), left: convertInchesToPoint(1.2) }
+                    }
+                },
+                children: children
+            }]
+        });
+        
+        // 生成Blob
+        const blob = await Packer.toBlob(doc);
+        _docxBlob = blob;
+        
+        // 更新页面显示（已生成完成）
+        console.log('DOCX generated:', blob.size, 'bytes');
+        
+    } catch (e) {
+        console.error('DOCX生成失败:', e);
+        // 即使docx生成失败，页面结果已经展示，不影响用户体验
+    }
+}
+
+// 下载docx
+function downloadDocx() {
+    if (!_docxBlob) {
+        alert('申报规划书正在生成中，请稍候...');
+        return;
+    }
+    
+    const now = new Date();
+    const fileName = '博友政策_申报规划书_' + now.getFullYear() + 
+        String(now.getMonth() + 1).padStart(2, '0') + 
+        String(now.getDate()).padStart(2, '0') + '.docx';
+    
+    saveAs(_docxBlob, fileName);
+}
+
+// ========================================
+// 匹配逻辑
+// ========================================
+
 function generateMatches(data) {
     var matches = [];
     var revenue = data.revenue || '';
@@ -146,9 +491,7 @@ function generateMatches(data) {
     };
     
     var hasQual = function(q) { return qualifications.indexOf(q) >= 0; };
-    var hasInterest = function(q) { return interests.indexOf(q) >= 0; };
     
-    // 判断企业成立年限
     var yearsOld = 0;
     if (establishYear === '2025') yearsOld = 0;
     else if (establishYear === '2024') yearsOld = 2;
@@ -158,7 +501,6 @@ function generateMatches(data) {
     else if (establishYear === '2020-2016') yearsOld = 8;
     else yearsOld = 12;
     
-    // 1. 科小入库 - 门槛最低
     if (yearsOld >= 0 && !hasQual('gaoxin')) {
         matches.push({
             name: '科技型中小企业评价入库',
@@ -169,20 +511,17 @@ function generateMatches(data) {
         });
     }
     
-    // 2. 国高认定
     if (yearsOld >= 1 && !hasQual('gaoxin') && revenue !== '0-500') {
-        var amount = '20-35万（各区不同）';
         matches.push({
             name: '国家高新技术企业认定',
-            amount: amount,
+            amount: '20-35万（各区不同）',
             window: '每年3-5月（建议提前6个月准备）',
             urgency: 'soon',
-            desc: '深圳企业补贴的"入场券"。拿下国高后续申报事半功倍。'
+            desc: '深圳企业补贴的"入场券"。拿下国高后续申报事半功倍。企业所得税由25%降至15%。'
         });
     }
     
-    // 3. 专精特新
-    if (yearsOld >= 2 && (isRevenueOK(1000) || interests.indexOf('zhuanjing') >= 0)) {
+    if (yearsOld >= 2 && (isRevenueOK(1000) || (interests || []).indexOf('zhuanjing') >= 0)) {
         matches.push({
             name: '专精特新企业认定',
             amount: '省专精特新20-50万 · 国家小巨人50-200万',
@@ -192,7 +531,6 @@ function generateMatches(data) {
         });
     }
     
-    // 4. 研发费用资助
     if (data.rdCost && data.rdCost !== '0-50') {
         matches.push({
             name: '企业研发费用资助',
@@ -203,8 +541,7 @@ function generateMatches(data) {
         });
     }
     
-    // 5. 技改补贴
-    if (interests.indexOf('jigai') >= 0) {
+    if ((interests || []).indexOf('jigai') >= 0) {
         matches.push({
             name: '技术改造项目',
             amount: '最高5000万',
@@ -214,8 +551,7 @@ function generateMatches(data) {
         });
     }
     
-    // 6. 人才补贴
-    if (interests.indexOf('rencai') >= 0) {
+    if ((interests || []).indexOf('rencai') >= 0) {
         matches.push({
             name: '高层次人才补贴',
             amount: '160-600万',
@@ -225,8 +561,7 @@ function generateMatches(data) {
         });
     }
     
-    // 7. 工程中心
-    if (isRevenueOK(5000) && (interests.indexOf('gongcheng') >= 0)) {
+    if (isRevenueOK(5000) && (interests || []).indexOf('gongcheng') >= 0) {
         matches.push({
             name: '工程研究中心/工程实验室',
             amount: '500-1500万',
@@ -236,19 +571,17 @@ function generateMatches(data) {
         });
     }
     
-    // 8. 军工资质
-    if (interests.indexOf('junxun') >= 0) {
+    if ((interests || []).indexOf('junxun') >= 0) {
         matches.push({
             name: '军工资质办理',
-            amount: '市场准入资质（无直接补贴，但打开军工市场）',
+            amount: '市场准入资质',
             window: '常年受理',
             urgency: 'later',
             desc: '4项军工资质全流程服务，适合有意进入军工供应链的企业。'
         });
     }
     
-    // 9. 语料券
-    if (district !== '其他省市' && interests.indexOf('gaoxin') >= 0) {
+    if (district !== '其他省市' && (interests || []).indexOf('gaoxin') >= 0) {
         matches.push({
             name: '人工智能语料券',
             amount: '采购补贴最高200万，开放奖励最高100万',
@@ -258,7 +591,6 @@ function generateMatches(data) {
         });
     }
     
-    // 如果没有匹配到任何项目，给一个兜底
     if (matches.length === 0) {
         matches.push({
             name: '免费专业诊断',
@@ -269,7 +601,6 @@ function generateMatches(data) {
         });
     }
     
-    // 按紧急程度排序
     var order = {now: 0, soon: 1, later: 2};
     matches.sort(function(a, b) {
         return (order[a.urgency] || 9) - (order[b.urgency] || 9);

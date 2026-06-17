@@ -217,6 +217,185 @@
 }
 
 /* ===========================================
+   结果展示
+   =========================================== */
+.result-content {
+    max-width: 700px;
+    margin: 0 auto;
+}
+.result-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.result-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 12px;
+}
+.result-header h2 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+.result-header p {
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+/* 下载按钮 */
+.result-download-bar {
+    text-align: center;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border-radius: var(--radius);
+    padding: 40px 30px;
+    margin-bottom: 30px;
+}
+.result-download-bar .btn {
+    background: var(--primary-dark);
+    color: var(--white);
+    border: none;
+    font-size: 1.1rem;
+    padding: 16px 48px;
+}
+.result-download-bar .btn:hover {
+    background: var(--primary);
+    transform: translateY(-2px);
+}
+.download-note {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--primary-dark);
+    opacity: 0.7;
+}
+
+/* 时间线 */
+.result-section {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+.result-section h3 {
+    color: var(--primary);
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--gold);
+}
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+}
+.timeline-item {
+    position: relative;
+    margin-bottom: 24px;
+    padding-left: 20px;
+}
+.timeline-dot {
+    position: absolute;
+    left: -26px;
+    top: 6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 2px var(--gold);
+    z-index: 1;
+}
+.timeline-content h4 {
+    color: var(--primary);
+    font-size: 1rem;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.timeline-amount {
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+.timeline-time {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+.timeline-desc {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* 标签 */
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.badge-now { background: #d5e8ff; color: #1a5276; }
+.badge-soon { background: #fdebd0; color: #b7950b; }
+.badge-later { background: #e8f8f5; color: #1e8449; }
+
+/* 结果CTA */
+.result-cta {
+    text-align: center;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    border-radius: var(--radius);
+    padding: 40px 30px;
+    color: var(--white);
+    margin-bottom: 20px;
+}
+.result-cta h3 {
+    color: var(--white);
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+.result-cta p {
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 20px;
+}
+.result-cta-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.result-cta-btns .btn-outline-inverse {
+    border-color: var(--white);
+    color: var(--white);
+}
+.result-cta-btns .btn-outline-inverse:hover {
+    background: var(--white);
+    color: var(--primary);
+}
+
+/* 结果底部 */
+.result-footer {
+    text-align: center;
+}
+.result-note {
+    color: var(--text-light);
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+/* ===========================================
    加载结果
    =========================================== */
 .plan-result {
