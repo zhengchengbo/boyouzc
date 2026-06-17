@@ -87,6 +87,17 @@ img { max-width: 100%; height: auto; }
     background: var(--white);
     color: var(--primary);
 }
+.btn-gold-outline {
+    background: transparent;
+    color: var(--gold);
+    border-color: var(--gold);
+}
+.btn-gold-outline:hover {
+    background: var(--gold);
+    color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(201,168,76,0.3);
+}
 .btn-lg { padding: 16px 48px; font-size: 1.1rem; }
 .btn-block { width: 100%; }
 

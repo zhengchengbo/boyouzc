@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自助申报规划 - 博友政策 | 免费生成专属申报方案</title>
+    <meta name="description" content="填写企业信息，免费生成专属政策申报规划书。博友政策13年经验，精准匹配深圳各级政府补贴项目。">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/plan.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="/">
+                    <span class="logo-icon">✦</span>
+                    <span class="logo-text">博友<span class="logo-accent">政策</span></span>
+                </a>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="/">首页</a></li>
+                    <li><a href="/services.html">服务项目</a></li>
+                    <li><a href="/plan.html" class="active">自助申报规划</a></li>
+                    <li><a href="/news.html">政策资讯</a></li>
+                    <li><a href="/about.html">关于我们</a></li>
+                    <li><a href="/contact.html">联系我们</a></li>
+                </ul>
+                <div class="nav-phone"><a href="tel:13590457677">135-9045-7677</a></div>
+                <button class="nav-toggle" aria-label="菜单">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1>自助申报规划</h1>
+            <p>填写企业信息，自动生成专属政策申报方案</p>
+        </div>
+    </section>
+
+    <section class="section plan-section">
+        <div class="container">
+            <div class="plan-intro">
+                <h2>您的企业今年能申报哪些补贴？</h2>
+                <p>花3分钟填写以下信息，系统将根据您的企业情况自动匹配深圳市2026年适合申报的补贴项目，并生成一份专属的申报规划路线图。</p>
+                <p class="plan-note">所有信息严格保密，仅用于政策匹配分析</p>
+            </div>
+
+            <form class="plan-form" id="planForm">
+                <!-- ==== 第一步：基本信息 ==== -->
+                <div class="form-step" id="step1">
+                    <div class="step-header">
+                        <span class="step-num-badge">1</span>
+                        <h3>基本信息</h3>
+                        <span class="step-label">您的企业处于什么阶段？</span>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>企业名称 <span class="required">*</span></label>
+                                <input type="text" name="companyName" required placeholder="请输入企业全称">
+                            </div>
+                            <div class="form-group">
+                                <label>所属行业 <span class="required">*</span></label>
+                                <select name="industry" required>
+                                    <option value="">请选择行业</option>
+                                    <option value="信息技术">信息技术</option>
+                                    <option value="生物医药">生物医药</option>
+                                    <option value="新材料">新材料</option>
+                                    <option value="高端装备">高端装备制造</option>
+                                    <option value="新能源">新能源/节能环保</option>
+                                    <option value="人工智能">人工智能</option>
+                                    <option value="电子信息">电子信息</option>
+                                    <option value="制造业">传统制造业</option>
+                                    <option value="建筑业">建筑业</option>
+                                    <option value="农业">现代农业</option>
+                                    <option value="文化创意">文化创意</option>
+                                    <option value="其他">其他</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>注册成立时间 <span class="required">*</span></label>
+                                <select name="establishYear" required>
+                                    <option value="">请选择</option>
+                                    <option value="2025">2025年（成立不到1年）</option>
+                                    <option value="2024">2024年（成立约1-2年）</option>
+                                    <option value="2023">2023年（成立约2-3年）</option>
+                                    <option value="2022">2022年（成立约3-4年）</option>
+                                    <option value="2021">2021年（成立约4-5年）</option>
+                                    <option value="2020-2016">2016-2020年（成立5-10年）</option>
+                                    <option value="2015-before">2015年及以前（成立10年以上）</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>注册地区 <span class="required">*</span></label>
+                                <select name="district" required>
+                                    <option value="">请选择</option>
+                                    <option value="福田区">福田区</option>
+                                    <option value="罗湖区">罗湖区</option>
+                                    <option value="南山区">南山区</option>
+                                    <option value="宝安区">宝安区</option>
+                                    <option value="龙岗区">龙岗区</option>
+                                    <option value="龙华区">龙华区</option>
+                                    <option value="光明区">光明区</option>
+                                    <option value="坪山区">坪山区</option>
+                                    <option value="盐田区">盐田区</option>
+                                    <option value="大鹏新区">大鹏新区</option>
+                                    <option value="深汕合作区">深汕合作区</option>
+                                    <option value="广东省其他市">广东省其他市</option>
+                                    <option value="其他省市">其他省市</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(2)">下一步</button>
+                </div>
+
+                <!-- ==== 第二步：经营数据 ==== -->
+                <div class="form-step" id="step2" style="display:none">
+                    <div class="step-header">
+                        <span class="step-num-badge">2</span>
+                        <h3>经营数据</h3>
+                        <span class="step-label">了解您的企业规模，匹配补贴门槛</span>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>上年度营业收入 <span class="required">*</span></label>
+                                <select name="revenue" required>
+                                    <option value="">请选择</option>
+                                    <option value="0-500">500万以下</option>
+                                    <option value="500-1000">500万-1000万</option>
+                                    <option value="1000-2000">1000万-2000万</option>
+                                    <option value="2000-5000">2000万-5000万</option>
+                                    <option value="5000-10000">5000万-1亿</option>
+                                    <option value="10000-20000">1亿-2亿</option>
+                                    <option value="20000-50000">2亿-5亿</option>
+                                    <option value="50000+">5亿以上</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>员工人数 <span class="required">*</span></label>
+                                <select name="employees" required>
+                                    <option value="">请选择</option>
+                                    <option value="0-5">5人及以下</option>
+                                    <option value="5-10">6-10人</option>
+                                    <option value="10-20">10-20人</option>
+                                    <option value="20-50">20-50人</option>
+                                    <option value="50-100">50-100人</option>
+                                    <option value="100-200">100-200人</option>
+                                    <option value="200-500">200-500人</option>
+                                    <option value="500+">500人以上</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>上年度研发费用</label>
+                                <select name="rdCost">
+                                    <option value="">请选择（选填）</option>
+                                    <option value="0-50">50万以下</option>
+                                    <option value="50-100">50万-100万</option>
+                                    <option value="100-500">100万-500万</option>
+                                    <option value="500-1000">500万-1000万</option>
+                                    <option value="1000-2000">1000万-2000万</option>
+                                    <option value="2000+">2000万以上</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>企业资产总额</label>
+                                <select name="assets">
+                                    <option value="">请选择（选填）</option>
+                                    <option value="0-500">500万以下</option>
+                                    <option value="500-2000">500万-2000万</option>
+                                    <option value="2000-5000">2000万-5000万</option>
+                                    <option value="5000-10000">5000万-1亿</option>
+                                    <option value="10000+">1亿以上</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-btns">
+                        <button type="button" class="btn btn-outline-inverse" onclick="prevStep(1)">上一步</button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(3)">下一步</button>
+                    </div>
+                </div>
+
+                <!-- ==== 第三步：资质与需求 ==== -->
+                <div class="form-step" id="step3" style="display:none">
+                    <div class="step-header">
+                        <span class="step-num-badge">3</span>
+                        <h3>资质与需求</h3>
+                        <span class="step-label">您企业目前拥有哪些资质？对哪些项目感兴趣？</span>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label>已拥有的资质（可多选）</label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-item"><input type="checkbox" name="qualifications" value="gaoxin"> 高新技术企业（国高）</label>
+                                <label class="checkbox-item"><input type="checkbox" name="qualifications" value="zhuanjing"> 专精特新企业</label>
+                                <label class="checkbox-item"><input type="checkbox" name="qualifications" value="xiaojuren"> 专精特新"小巨人"</label>
+                                <label class="checkbox-item"><input type="checkbox" name="qualifications" value="zhuanli"> 有效发明专利</label>
+                                <label class="checkbox-item"><input type="checkbox" name="qualifications" value="ruanjianzhuzuo"> 软件著作权</label>
+                                <label class="checkbox-item"><input type="checkbox" name="qualifications" value="ISO"> ISO体系认证</label>
+                                <label class="checkbox-item"><input type="checkbox" name="qualifications" value="none"> 以上均无</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>感兴趣的项目（可多选）</label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="gaoxin"> 高新技术企业认定</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="zhuanjing"> 专精特新企业申报</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="jigai"> 技术改造补贴</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="gongcheng"> 工程研究中心</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="yanfa"> 研发费用资助</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="junxun"> 军工资质办理</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="rencai"> 人才补贴</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="zhishi"> 知识产权服务</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="notsure"> 不确定，需要专业诊断</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>您的联系方式 <span class="required">*</span></label>
+                            <div class="form-row">
+                                <div class="form-group" style="flex:1">
+                                    <input type="text" name="contactName" required placeholder="姓名">
+                                </div>
+                                <div class="form-group" style="flex:2">
+                                    <input type="tel" name="contactPhone" required placeholder="手机号码">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>补充说明</label>
+                            <textarea name="remark" rows="3" placeholder="如有其他信息或需求，请在此补充说明（选填）"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-btns">
+                        <button type="button" class="btn btn-outline-inverse" onclick="prevStep(2)">上一步</button>
+                        <button type="submit" class="btn btn-primary">生成申报规划书</button>
+                    </div>
+                </div>
+
+                <!-- 步骤指示器 -->
+                <div class="step-indicator">
+                    <div class="step-dot" id="dot1">1</div>
+                    <div class="step-line"></div>
+                    <div class="step-dot" id="dot2">2</div>
+                    <div class="step-line"></div>
+                    <div class="step-dot" id="dot3">3</div>
+                </div>
+            </form>
+
+            <!-- 加载动画（提交后显示） -->
+            <div class="plan-result" id="planResult" style="display:none">
+                <div class="result-loading">
+                    <div class="loading-spinner"></div>
+                    <h3>正在为您生成专属申报规划书...</h3>
+                    <p>分析企业数据 · 匹配政策资源 · 制定最优方案</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3>博友政策</h3>
+                    <p>深圳市博友项目科技有限公司</p>
+                    <p>专注企业政策申报13年</p>
+                </div>
+                <div class="footer-links">
+                    <h4>快速链接</h4>
+                    <ul>
+                        <li><a href="/services.html">服务项目</a></li>
+                        <li><a href="/plan.html">自助申报规划</a></li>
+                        <li><a href="/news.html">政策资讯</a></li>
+                        <li><a href="/about.html">关于我们</a></li>
+                        <li><a href="/contact.html">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>联系方式</h4>
+                    <p>📞 <a href="tel:13590457677">135-9045-7677</a></p>
+                    <p>📍 深圳市龙岗区龙岗街道碧新路2380号新生绿谷3栋1701</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 深圳市博友项目科技有限公司 All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/plan.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
