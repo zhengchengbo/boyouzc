@@ -1,0 +1,284 @@
+/* ===========================================
+   博友政策 · 补贴全景页专用样式
+   =========================================== */
+
+/* 页面Banner更新提示 */
+.hero-update {
+    margin-top: 10px;
+    font-size: 0.85rem !important;
+    color: rgba(255,255,255,0.5) !important;
+}
+
+/* 简介卡片 */
+.policy-intro-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--gold);
+}
+.policy-intro-card h2 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+}
+.policy-intro-card p {
+    color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1.7;
+}
+.policy-intro-card strong {
+    color: var(--gold);
+}
+
+/* ===========================================
+   分类标题
+   =========================================== */
+.policy-category {
+    margin: 40px 0 16px;
+}
+.category-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 2px solid var(--gold);
+}
+.category-icon {
+    font-size: 1.6rem;
+}
+.category-header h2 {
+    font-size: 1.3rem;
+    color: var(--primary);
+    font-weight: 700;
+}
+.category-count {
+    margin-left: auto;
+    background: var(--bg-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+/* ===========================================
+   政策卡片（可展开）
+   =========================================== */
+.policy-card {
+    background: var(--white);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.policy-card:hover {
+    box-shadow: 0 4px 16px rgba(26,58,92,0.1);
+    border-color: rgba(201,168,76,0.3);
+}
+.policy-card.active {
+    border-color: var(--gold);
+    box-shadow: 0 4px 20px rgba(201,168,76,0.12);
+}
+
+/* --- 可点击头 --- */
+.policy-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+.policy-card-header:hover {
+    background: rgba(201,168,76,0.04);
+}
+.policy-card.active .policy-card-header {
+    background: rgba(201,168,76,0.06);
+}
+
+.policy-card-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.policy-card-left h3 {
+    font-size: 1rem;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.policy-card-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+.policy-amount {
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+.policy-toggle {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    background: var(--bg-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+.policy-card.active .policy-toggle {
+    background: var(--gold);
+    color: var(--primary-dark);
+}
+
+/* --- 标签 --- */
+.policy-tag {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.tag-hot {
+    background: #ffe0e0;
+    color: #c0392b;
+}
+.tag-new {
+    background: #d5f5e3;
+    color: #1e8449;
+}
+.tag-timely {
+    background: #d5e8ff;
+    color: #1a5276;
+}
+.tag-big {
+    background: #fdebd0;
+    color: #b7950b;
+}
+
+/* --- 可展开内容体 --- */
+.policy-card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+}
+.policy-card.active .policy-card-body {
+    max-height: 1200px; /* 由JS动态控制，这个是兜底 */
+}
+.policy-info {
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+}
+
+.policy-info h4 {
+    color: var(--primary);
+    font-size: 0.95rem;
+    margin: 16px 0 8px;
+    font-weight: 600;
+}
+.policy-info p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+.policy-info ul {
+    padding-left: 18px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    line-height: 2;
+}
+.policy-info li { margin-bottom: 2px; }
+
+/* meta网格信息 */
+.policy-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.policy-meta-item {
+    background: var(--bg-light);
+    padding: 10px 14px;
+    border-radius: 8px;
+}
+.policy-meta-item strong {
+    display: block;
+    color: var(--primary);
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+.policy-meta-item p {
+    font-size: 0.85rem;
+    margin-bottom: 0;
+}
+
+/* 表格 */
+.policy-table-wrap {
+    overflow-x: auto;
+    margin: 10px 0;
+}
+.policy-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.policy-table th {
+    background: var(--primary);
+    color: var(--white);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+}
+.policy-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+}
+.policy-table tr:nth-child(even) td {
+    background: var(--bg-light);
+}
+
+/* 提示框 */
+.policy-tip {
+    background: #fff8e6;
+    border-left: 3px solid var(--gold);
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem !important;
+    margin-top: 12px !important;
+    color: var(--text) !important;
+}
+
+/* ===========================================
+   响应式
+   =========================================== */
+@media (max-width: 768px) {
+    .policy-card-header {
+        padding: 14px 16px;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .policy-card-right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    .policy-intro-card {
+        padding: 24px;
+    }
+    .policy-meta-grid {
+        grid-template-columns: 1fr;
+    }
+}
