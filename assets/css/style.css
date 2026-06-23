@@ -799,6 +799,66 @@ img { max-width: 100%; height: auto; }
     .hero-stats { gap: 30px; }
     .process-steps { grid-template-columns: 1fr; }
     .section { padding: 50px 0; }
+
+/* --- 首页最新政策解读 --- */
+.latest-news-home {
+    background: var(--white);
+}
+.news-home-grid {
+    max-width: 600px;
+    margin: 0 auto;
+}
+.news-home-card {
+    background: var(--bg-light);
+    border-radius: 12px;
+    padding: 30px;
+    position: relative;
+    border: 1px solid #e8e8e8;
+    transition: box-shadow 0.3s;
+}
+.news-home-card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.news-home-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--primary-dark);
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+.news-home-card h3 {
+    font-size: 18px;
+    color: var(--primary);
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+.news-home-date {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+.news-home-excerpt {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+.news-home-link {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+.news-home-link:hover {
+    color: var(--gold-light);
+}
+.news-home-more {
+    text-align: center;
+    margin-top: 30px;
+}
     .service-block { padding: 24px; }
     .service-block-header { flex-direction: column; }
 }
